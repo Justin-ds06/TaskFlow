@@ -32,24 +32,10 @@
 
 
     <div class="chips">
-      <select id="filterStatus" aria-label="Status">
-        <option value="all">Status: All</option>
-        <option value="active">Status: Active</option>
-        <option value="completed">Status: Completed</option>
-      </select>
-      <select id="filterPriority" aria-label="Priority">
-        <option value="all">Priority: All</option>
-        <option>High</option><option>Medium</option><option>Low</option>
-      </select>
-      <select id="filterCategory" aria-label="Category">
-        <option value="all">Category: All</option>
-        <option>School</option><option>Work</option><option>Personal</option><option>Home</option>
-      </select>
-      <select id="sortBy" aria-label="Sort">
-        <option value="due">Sort: Due date</option>
-        <option value="priority">Sort: Priority</option>
-        <option value="created">Sort: Newest</option>
-      </select>
+      <button class="chip" data-filter="status" title="Click to change">Status: All</button>
+      <button class="chip" data-filter="priority" title="Click to change">Priority: All</button>
+      <button class="chip" data-filter="category" title="Click to change">Category: All</button>
+      <button class="chip" data-filter="sort" title="Click to change">Sort: Due date</button>
     </div>
 
 
@@ -65,7 +51,7 @@
 
   </div>
 
- 
+
   <dialog id="taskDialog">
     <form id="taskForm" novalidate>
       <h2 id="dialogTitle">Add task</h2>

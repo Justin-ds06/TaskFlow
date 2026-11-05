@@ -138,28 +138,47 @@ function deleteTask(id) {
 }
 
 // ---------- 8. SEARCH, FILTER, SORT ----------
+const filterChoices = {
+  status:   { label: "Status",   values: ["All", "Active", "Completed"] },
+  priority: { label: "Priority", values: ["All", "High", "Medium", "Low"] },
+  category: { label: "Category", values: ["All", "School", "Work", "Personal", "Home"] },
+  sort:     { label: "Sort",     values: ["Due date", "Priority", "Newest"] },
+};
+const filterPosition = { status: 0, priority: 0, category: 0, sort: 0 };   // which choice is selected
+
+function currentFilter(name) {                    // e.g. currentFilter("status") -> "All"
+  return filterChoices[name].values[filterPosition[name]];
+}
+function cycleFilter(button) {                    // runs when a chip is clicked
+  const name = button.dataset.filter;
+  filterPosition[name] = (filterPosition[name] + 1) % filterChoices[name].values.length;
+  button.textContent = filterChoices[name].label + ": " + currentFilter(name);
+  button.classList.toggle("active", name !== "sort" && filterPosition[name] !== 0);
+  renderTasks();
+}
+
 function searchTasks() {                          // runs on every keystroke in the search box
   renderTasks();
 }
 function applyFilters() {                         // returns the tasks that should be shown
   const text = searchInput.value.trim().toLowerCase();
-  const status = $("filterStatus").value;
-  const category = $("filterCategory").value;
-  const priority = $("filterPriority").value;
-  const sortBy = $("sortBy").value;
+  const status = currentFilter("status");
+  const category = currentFilter("category");
+  const priority = currentFilter("priority");
+  const sortBy = currentFilter("sort");
 
   const result = tasks.filter((t) => {
     const matchesText = (t.title + " " + t.description).toLowerCase().includes(text);
-    const matchesStatus = status === "all" || (status === "completed") === t.completed;
-    const matchesCategory = category === "all" || t.category === category;
-    const matchesPriority = priority === "all" || t.priority === priority;
+    const matchesStatus = status === "All" || (status === "Completed") === t.completed;
+    const matchesCategory = category === "All" || t.category === category;
+    const matchesPriority = priority === "All" || t.priority === priority;
     return matchesText && matchesStatus && matchesCategory && matchesPriority;
   });
 
   const rank = { High: 0, Medium: 1, Low: 2 };
   result.sort((a, b) => {
-    if (sortBy === "priority") return rank[a.priority] - rank[b.priority];
-    if (sortBy === "due") return (a.dueDate || "9999").localeCompare(b.dueDate || "9999");
+    if (sortBy === "Priority") return rank[a.priority] - rank[b.priority];
+    if (sortBy === "Due date") return (a.dueDate || "9999").localeCompare(b.dueDate || "9999");
     return b.createdAt - a.createdAt;             // default: newest first
   });
   return result;
@@ -256,8 +275,9 @@ dialog.addEventListener("cancel", (e) => { e.preventDefault(); closeForm(); }); 
 Object.keys(fields).forEach((name) =>                           // row 12
   fields[name].addEventListener("input", () => validateField(name)));
 
-// Filters: any change re-draws the list (row 8)
-["filterStatus", "filterCategory", "filterPriority", "sortBy"].forEach((id) => $(id).addEventListener("change", renderTasks));
+// Filter and sort buttons: each click picks the next choice and re-draws the list (row 8)
+document.querySelectorAll(".chip").forEach((chip) =>
+  chip.addEventListener("click", () => cycleFilter(chip)));
 
 // One listener for the whole list (works for tasks added later)
 taskList.addEventListener("change", (e) => {                    // row 5
