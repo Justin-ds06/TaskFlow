@@ -13,7 +13,7 @@ let tasks = [];                                   // array of task objects
 const $ = (id) => document.getElementById(id);
 const searchInput = $("searchInput"), taskList = $("taskList"), emptyMessage = $("emptyMessage");
 const dialog = $("taskDialog"), form = $("taskForm");
-const fields = { title: $("title"), description: $("description"), dueDate: $("dueDate") };
+const fields = { title: $("title"), description: $("description"), dueDate: $("dueDate"), category: $("category") };
 
 // ---------- 3. SMALL HELPERS ----------
 function today() {                                // today as "YYYY-MM-DD"
@@ -57,6 +57,9 @@ function validateField(name) {                    // checks ONE field, returns t
   }
   if (name === "description" && value.length > 300) {
     message = "Description must be 300 characters or fewer.";
+  }
+  if (name === "category" && value === "") {
+    message = "Choose a category.";
   }
   if (name === "dueDate" && value !== "") {
     const isNewTask = $("taskId").value === "";
@@ -140,7 +143,7 @@ function searchTasks() {                          // runs on every keystroke in 
 }
 function applyFilters() {                         // returns the tasks that should be shown
   const text = searchInput.value.trim().toLowerCase();
-  const status = document.querySelector('input[name="status"]:checked').value;
+  const status = $("filterStatus").value;
   const category = $("filterCategory").value;
   const priority = $("filterPriority").value;
   const sortBy = $("sortBy").value;
@@ -167,19 +170,19 @@ function renderTasks() {
   const visible = applyFilters();
 
   taskList.innerHTML = visible.map((t) => `
-    <li class="task ${t.priority} ${t.completed ? "done" : ""} ${isOverdue(t) ? "overdue" : ""}">
+    <li class="task ${t.completed ? "done" : ""} ${isOverdue(t) ? "overdue" : ""}">
       <input type="checkbox" data-id="${t.id}" ${t.completed ? "checked" : ""} aria-label="Mark done">
       <div class="task-body">
         <div class="task-title">${escapeHtml(t.title)}</div>
         ${t.description ? `<p class="task-desc">${escapeHtml(t.description)}</p>` : ""}
-        <p class="task-meta">
-          ${t.priority} · ${t.category}
-          ${t.dueDate ? `· <span class="due">${isOverdue(t) ? "Overdue: " : "Due "}${t.dueDate}</span>` : ""}
+        <p class="task-meta">${t.category}
+          ${t.dueDate ? `· <span class="due">${isOverdue(t) ? "Overdue " : "Due "}${t.dueDate}</span>` : ""}
         </p>
       </div>
+      <span class="badge ${t.priority}">${t.priority}</span>
       <div class="task-buttons">
         <button class="btn" data-action="edit" data-id="${t.id}">Edit</button>
-        <button class="btn" data-action="delete" data-id="${t.id}">Delete</button>
+        <button class="btn" data-action="delete" data-id="${t.id}">Del</button>
       </div>
     </li>`).join("");
 
@@ -241,16 +244,11 @@ function toggleTheme() {
 }
 function loadTheme() {
   const saved = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.documentElement.dataset.theme = saved || (prefersDark ? "dark" : "light");
-}
-function toggleSidebar() {
-  $("sidebar").classList.toggle("open");
+  document.documentElement.dataset.theme = saved || "dark";
 }
 
 // ---------- 12. EVENT LISTENERS (see the Event Map, Appendix C) ----------
 $("addBtn").addEventListener("click", addTask);                 // row 1
-$("fabAdd").addEventListener("click", addTask);
 searchInput.addEventListener("input", searchTasks);             // row 2
 form.addEventListener("submit", handleSubmit);                  // rows 3-4
 $("cancelBtn").addEventListener("click", closeForm);            // row 13
@@ -259,8 +257,7 @@ Object.keys(fields).forEach((name) =>                           // row 12
   fields[name].addEventListener("input", () => validateField(name)));
 
 // Filters: any change re-draws the list (row 8)
-["filterCategory", "filterPriority", "sortBy"].forEach((id) => $(id).addEventListener("change", renderTasks));
-document.querySelectorAll('input[name="status"]').forEach((r) => r.addEventListener("change", renderTasks));
+["filterStatus", "filterCategory", "filterPriority", "sortBy"].forEach((id) => $(id).addEventListener("change", renderTasks));
 
 // One listener for the whole list (works for tasks added later)
 taskList.addEventListener("change", (e) => {                    // row 5
@@ -276,7 +273,6 @@ $("exportBtn").addEventListener("click", exportData);           // row 10
 $("importBtn").addEventListener("click", () => $("importFile").click());
 $("importFile").addEventListener("change", importData);         // row 14
 $("themeBtn").addEventListener("click", toggleTheme);           // row 11
-$("menuBtn").addEventListener("click", toggleSidebar);          // row 15
 
 // Start the app when the page is ready (row 9)
 document.addEventListener("DOMContentLoaded", () => {
