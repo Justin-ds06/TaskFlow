@@ -1,9 +1,3 @@
-/* =====================================================
-   TaskFlow - app.js
-   Every user action follows the same cycle:
-   event -> function -> change the tasks array -> saveData() -> renderTasks()
-   ===================================================== */
-
 // ---------- 1. DATA (the single source of truth) ----------
 const STORAGE_KEY = "taskflow.tasks";
 const THEME_KEY = "taskflow.theme";
