@@ -1,0 +1,132 @@
+/* ===== 1. COLORS (change the theme here) ===== */
+:root {
+  --bg: #f4f6f5;
+  --surface: #ffffff;
+  --text: #1c2b2a;
+  --muted: #667573;
+  --line: #d9e0de;
+  --accent: #0f766e;
+  --danger: #c62828;
+}
+[data-theme="dark"] {
+  --bg: #121a19;
+  --surface: #1b2625;
+  --text: #e6eeec;
+  --muted: #93a4a1;
+  --line: #2c3a38;
+  --accent: #2dd4bf;
+  --danger: #ff6b6b;
+}
+
+/* ===== 2. BASICS ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+input, select, textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ===== 3. BUTTONS ===== */
+.btn {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+.icon-btn { background: none; border: 0; font-size: 1.3rem; cursor: pointer; }
+
+/* ===== 4. HEADER ===== */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.topbar h1 { margin: 0; font-size: 1.3rem; color: var(--accent); }
+.topbar input { flex: 1; max-width: 400px; }
+
+/* ===== 5. LAYOUT: sidebar + main ===== */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; padding: 20px; max-width: 1000px; margin: 0 auto; }
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+.sidebar label, fieldset label { display: block; font-size: 0.9rem; color: var(--muted); }
+fieldset { border: 1px solid var(--line); border-radius: 6px; }
+fieldset label input { width: auto; margin-right: 6px; }
+.backup { display: flex; flex-direction: column; gap: 8px; }
+
+/* ===== 6. DASHBOARD ===== */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.stat { flex: 1; min-width: 90px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); }
+.stat span { display: block; font-size: 1.8rem; font-weight: 700; color: var(--text); }
+.stat.overdue span { color: var(--danger); }
+.progress { flex-basis: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+#progressBar { height: 100%; width: 0; background: var(--accent); transition: width 0.3s; }
+
+/* ===== 7. TASK LIST ===== */
+.task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.task {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--line);
+  border-radius: 8px;
+}
+.task.High { border-left-color: var(--danger); }
+.task.Medium { border-left-color: #d99a00; }
+.task.Low { border-left-color: var(--accent); }
+.task input[type="checkbox"] { width: 20px; height: 20px; margin-top: 4px; }
+.task-body { flex: 1; }
+.task-title { font-weight: 600; }
+.task-desc, .task-meta { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); }
+.task.done .task-title { text-decoration: line-through; color: var(--muted); }
+.task.overdue { background: color-mix(in srgb, var(--danger) 10%, var(--surface)); }
+.task.overdue .due { color: var(--danger); font-weight: 600; }
+.task-buttons { display: flex; gap: 6px; }
+.task-buttons button { padding: 4px 10px; font-size: 0.85rem; }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
+/* ===== 8. DIALOG / FORM ===== */
+dialog { width: min(480px, 92vw); padding: 20px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+dialog h2 { margin-top: 0; }
+dialog label { display: block; margin-bottom: 12px; font-size: 0.9rem; color: var(--muted); }
+.row { display: flex; gap: 12px; }
+.row label { flex: 1; }
+.actions { justify-content: flex-end; }
+.error { display: block; min-height: 1.2em; font-size: 0.8rem; color: var(--danger); }
+input.invalid, textarea.invalid { border-color: var(--danger); }
+
+/* ===== 9. MOBILE ===== */
+.menu-only { display: none; }
+.fab { position: fixed; right: 18px; bottom: 18px; width: 54px; height: 54px; border: 0; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 2rem; box-shadow: 0 3px 10px rgba(0,0,0,.3); cursor: pointer; }
+
+@media (max-width: 700px) {
+  .menu-only { display: block; }
+  #addBtn { display: none; }                 /* the floating + replaces it */
+  .layout { grid-template-columns: 1fr; padding: 12px; }
+  .sidebar { display: none; }                /* hidden until the menu is tapped */
+  .sidebar.open { display: flex; }
+  .topbar { padding: 10px 12px; gap: 8px; }
+  .topbar h1 { font-size: 1.1rem; }
+  .task { flex-wrap: wrap; }
+}
